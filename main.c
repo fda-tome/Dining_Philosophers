@@ -6,6 +6,11 @@
 
 struct monitor DiningPhilosophers = {.init_code = &initialization_code, .pick = &pickup, .put = &putdown};
 
+
+/*
+ * Rotina para criação de threads e definição de saidas
+ * @param i indicação do filósofo referente a rotina
+*/
 void *routine(void* i){
     int philo = *(int*)i;
     while(1){

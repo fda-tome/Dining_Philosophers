@@ -15,6 +15,9 @@ static sem_t mutex;
 static char state[5];
 static struct condition self[5];
 
+/*
+ * Inicialização das variaveis necessarias para a utilizacao do monitor
+*/
 void initialization_code(){
     next_count = 0;
     sem_init(&next, 0, 0);
@@ -29,6 +32,10 @@ void initialization_code(){
     intent[3] = 4;
 }
 
+/*
+ * Implementacao do wait de variaveis condicionais com exclusao mutua utilizando semaforos para seguir o padrao dos monitores
+ * @param i define o index da condicional que ira esperar
+*/
 static void wait(int i){
     (self[i].count)++;
     if(next_count > 0)
@@ -39,6 +46,10 @@ static void wait(int i){
     (self[i].count)--;
 }
 
+/*
+ * Signal carateristico de variaveis condicionais de monitores utilizando semaforos
+ * @param i define o index da condicional que devera dar signal
+*/
 static void signal(int i){
     if(self[i].count > 0){
         next_count++;
@@ -47,6 +58,10 @@ static void signal(int i){
         next_count--;
     }
 }
+
+/* Testa a disponibilidade das condicionais para serem utilizadas
+ * @param i define o index do filosofo a ser testado
+*/
 static void test(int i){
     if ((state[(i + 4) % 5] != 'E') && (state[i] == 'H') && (state[(i + 1) % 5] != 'E') && (intent[i] == i) && (intent[(i + 4) % 5] == i)){
             state[i] = 'E';
@@ -54,6 +69,9 @@ static void test(int i){
     }
 }
 
+/* Funçao para pegar os palitos para comer
+ * @param i define o index do filosofo que ira pegar os palitos
+*/
 void pickup(int i){
     state[i] = 'H';
     test(i);
@@ -61,6 +79,9 @@ void pickup(int i){
         wait(i);
 }
 
+/*Funçao para devolver os palitos e voltar a pensar
+ * @param i define o index do filosofo que devolvera os palitos
+*/
 void putdown(int i){
     intent[i] = (i + 1) % 5;
     intent[(i + 4) % 5] = (i + 4) % 5;
